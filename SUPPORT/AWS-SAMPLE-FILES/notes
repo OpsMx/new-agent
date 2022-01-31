@@ -1,28 +1,32 @@
 AWS account configuration supporting files
+<account1> : Refers the primary account or the authenticating account i.e the credentials used
+             to authenticate with AWS. Note that this can also be given permissions to deploy to.
+             We can have the primary account for authentication as well for deployment.
+<account2> : Refers to the account/role that is being deployed to i.e. target of the deployment
+             from spinnaker.
 
 authenticating-account : This is the configuration for the "primary" account or "managing" role
        user: We will need a "user" only if we are outside the AWS eco-system. Within the system,
-             everything is accessible via "role" which loosely translates to a "system account".
+             everything is accessible via "role" which loosely translates to a "service account".
              An EC2 instance can have a "role" (or roleS) that will authenticate and authorize
              access to all AWS resource based in the IAM logic. 
-             EKS worker notes are basically EC2 instances. These notes can have a "role".
+             EKS worker notes are basically EC2 instances. These nodes can have a "role".
              So, if Spinnaker is running in an EKS cluster, a "user" is not required at all.
-       assume-only-role: This file describes an example role that is given to "srini-nonroot-role"
+       sample-managing-role: This file describes an example role that is given to "srini-nonroot-role"
              that can be configured as the "primary" account. However, ths account so configured
              cannot do ANYTHING excapt to "assume role" with which trust relation ships are established
              
 target-account: This is the configuration for the account where deployment will be done
-       ROL-Spinnaker-Managed-Role: This file describes the permissions(policy) and trust
+       sample-managed-Role: This file describes the permissions(policy) and trust
              setup so that user/srini-nonroot is can assume this role and deploy. 
-       srini-target-policy: This is the cleaned-up version with some of the stuff removed. This 
-             represents the minimal version that a role must have to be able to deploy to EC2
-             "srini-target-role" has been created in opsmx-account to test this
+       sample-target-policy: This represents the minimal version that a role must have to be able to
+             deploy to EC2 using "srini-target-role". Note that additional permissions may need to be
+             given depending on the actions we need spinnaker to take
        BaseIamRole: This is the default.iamrole defined in the primary account. 
              Spinnaker uses this to get any permissions it may not get from the given role.
              Note that it does "assumerole" on the TARGET-Account i.e NOT on the primary account
              So, if we have multiple target-accounts, each of them needs to have this role. 
-
-             Procedure: a) Go to EC2 dashboard b) Select Role c) Click "Create" d) In "Common use cases"
+         Procedure: a) Go to EC2 dashboard b) Select Role c) Click "Create" d) In "Common use cases"
              click on EC2 and Next:Permissions e) Cick Next:Tags f) Click Next:Review g) Give the role
              name as "BaseIamRole" and click "Create Role".
        "key name": From EC2 dashboard, local "Key pair" in the LHS menu, towards the bottom. Create 
@@ -30,17 +34,16 @@ target-account: This is the configuration for the account where deployment will 
              instances created by Spinnaker. This will appear in Deploy pop-up, drop-down menu.
        VPCs, subnets, security groups: These need to be created manually and tagged appropriately.
              Best is to give the same tag-name to all subnets within one VPC.
-       TODO/Check:
-            a) IAM Actions allowed appear to be too permissive: Do we need create/DeletePolicy?
-            b) Is self-refernce required if this is ONLY the target-account i.e. it is never
-              "assumed" from itself? Only primary-account should need this.
+             immutable_metadata={"purpose":"<example-purpose>"}
+             For example: 
+                  immutable_metadata={"purpose":"web-alb"}
 
 
 Trust-relationship basics:
 Use case: Party B need needs to "trust" party A.  In our case, it is ROLE
 B : arn:aws:iam::<account2>:role/ROL-Spinnaker-Managed-Role (opsmx account)
-A : arn:aws:iam::<account1>:role/srini-nonroot-role   (srini personal account-role)
-  : arn:aws:iam::<account1>:user/srini-nonroot        (srini personal account-user)
+A : arn:aws:iam::<account1>:role/srini-nonroot-role   (account-role)
+  : arn:aws:iam::<account1>:user/srini-nonroot        (account-user)
 
 
 A: Must have permission to "assume" role B. It also needs to be able to assume its own role (self-reference).
