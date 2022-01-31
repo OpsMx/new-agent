@@ -21,6 +21,10 @@ target-account: This is the configuration for the account where deployment will 
              Spinnaker uses this to get any permissions it may not get from the given role.
              Note that it does "assumerole" on the TARGET-Account i.e NOT on the primary account
              So, if we have multiple target-accounts, each of them needs to have this role. 
+
+             Procedure: a) Go to EC2 dashboard b) Select Role c) Click "Create" d) In "Common use cases"
+             click on EC2 and Next:Permissions e) Cick Next:Tags f) Click Next:Review g) Give the role
+             name as "BaseIamRole" and click "Create Role".
        "key name": From EC2 dashboard, local "Key pair" in the LHS menu, towards the bottom. Create 
              key pair, give a name and download the PEM key. This can be used to login to the EC2
              instances created by Spinnaker. This will appear in Deploy pop-up, drop-down menu.
