@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: create-agent
+  labels:
+    app: agent-install
+data:
+  create-agent.sh: |
+{{- .Files.Get "config/create-agent/create-agent.sh"  | nindent 4 }}
+  create-agent-request.json: |
+{{- tpl (.Files.Get "config/create-agent/create-agent-request.json") .  | nindent 4 }}
+  service-manifest-template.yml: |
+{{- tpl (.Files.Get "config/create-agent/service-manifest-template.yml") .  | nindent 4 }}

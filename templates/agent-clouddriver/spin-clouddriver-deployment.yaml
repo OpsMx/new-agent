@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spin
+    app.kubernetes.io/managed-by: halyard
+    app.kubernetes.io/name: clouddriver
+    app.kubernetes.io/part-of: spinnaker
+    app.kubernetes.io/version: 1.26.6
+    cluster: spin-clouddriver
+  name: spin-clouddriver
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: spin
+      cluster: spin-clouddriver
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: spin
+        app.kubernetes.io/managed-by: halyard
+        app.kubernetes.io/name: clouddriver
+        app.kubernetes.io/part-of: spinnaker
+        app.kubernetes.io/version: 1.26.6
+        cluster: spin-clouddriver
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: JAVA_OPTS
+          value: -XX:MaxRAMPercentage=100.0
+        - name: SPRING_PROFILES_ACTIVE
+          value: local
+        image: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
+        imagePullPolicy: IfNotPresent
+        lifecycle: {}
+        name: clouddriver
+        ports:
+        - containerPort: 7002
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - wget
+            - --no-check-certificate
+            - --spider
+            - -q
+            - http://localhost:7002/health
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opsmx
+          name: k8s-dir
+        - mountPath: /opt/spinnaker/config
+          name: spin-clouddriver-config
+      - args:
+        - while true; do sh /tmp/script/k8config-sync.sh; sleep 60s; done
+        command:
+        - sh
+        - -c
+        image: quay.io/konikris/k8s-decoder:git-k8s
+        imagePullPolicy: IfNotPresent
+        name: k8s-config-sync
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opsmx
+          name: k8s-dir
+        - mountPath: /tmp/script
+          name: k8config-sync
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 720
+      volumes:
+      - name: spin-clouddriver-config
+        secret:
+          defaultMode: 420
+          secretName: spin-clouddriver-config
+      - configMap:
+          defaultMode: 420
+          name: k8config-sync
+        name: k8config-sync
+      - name: k8s-dir
+        emptyDir: {}
+          

@@ -1,0 +1,254 @@
+# Default values for agent-install.
+# Instructions:
+# Update the values in the "agent", "clouddriver" and "accountConfig" sections as required
+# In case this file needs to be checked into a repo without secrets, follow the instructions below for reading secrets from k8s secrets
+# What we need:
+# a) IF K8S IS REQUIRED: a github repo. Create new github repo, if required
+# b) IF K8S IS REQUIRED: github-token: create a personal-access token with read permissions
+# c) IF AWS IS REQUIRED: AWS k8s environment that authenticates the roles used
+# d) IF AWS IS REQUIRED: Role + appropriate policies, a key-pair and a role "BaseIAMRole" which has a trust relationship with ec2 services
+#
+# USING k8s secrets
+# 1) create github-token secret
+#   k create secret generic gituser-token  --from-literal user=<value> --from-literal token=<value>
+# 2) Create aws secrets, as required. If using Role-authentication, remove access and secret keys and the line in the YAML below
+#   k create secret generic aws-account-keys --from-literal awsAccessKey=<value> --from-literal awsSecretKey=<value> --from-literal accountId=<value>
+# 3) Update the script in SAMPLES/secret-decoder.sh and follow the instructions in the script 
+#     
+agent:
+  agentName: myagent  # All lower-case, no spaces
+  gateUrl: https://oes-gate.CUSTMER-NAME.opsmx.net
+  cluster: srini-YOUR
+  description: "Agent deployed on a remote cluster"
+ 
+# Information required for configuring clouddriver functionality: Dynamic accounts and routing
+clouddriver:
+  dynGit:
+    uri: https://github.com/YOUR-ORG/YOUR-REPO.git  # Please change to your own repo
+    username: encrypted:gituser-token:user
+    password: encrypted:gituser-token:token
+    defaultLabel: master  #change to main or any branch as required
+  spinnakerRBAC: false
+  spinnakerKayanta: false
+
+
+# Information required for clouddriver accounts
+accountConfig:
+  aws:
+    enabled: true
+    accounts:
+    - name: "primary-acc"
+      requiredGroupMembership: []
+      providerVersion: "v1"
+      permissions: {}
+      accountId: encrypted:aws-account-secret:accountId
+      assumeRole: "role/srini-nonroot-role"
+      lifecycleHooks: []
+      regions:
+      - name: "ap-south-1"
+    - name: "target-acc"
+      requiredGroupMembership: []
+      providerVersion: "v1"
+      permissions: {}
+      accountId: encrypted:aws-account-secret:accountId
+      assumeRole: "role/personal-role"
+      lifecycleHooks: []
+      regions:
+      - name: "ap-south-1"
+    bakeryDefaults:
+      baseImages: []
+      awsAccessKey: encrypted:aws-account-secret:awsAccessKey
+      awsSecretKey: encrypted:aws-account-secret:awsSecretKey
+    defaultKeyPairTemplate: "{{name}}-keypair"
+    defaultRegions:
+    - name: "ap-south-1"
+    defaults:
+      iamRole: "BaseIAMRole"
+    primaryAccount: "primary-acc"
+    accessKeyId: encrypted:aws-account-secret:awsAccessKey
+    secretAccessKey: encrypted:aws-account-secret:awsSecretKey
+  ecs:
+    enabled: false
+    accounts:
+    - name: YOUR-ecs-dev
+      requiredGroupMembership: []
+      permissions: {}
+      awsAccount: YOUR-aws-account
+    primaryAccount: YOUR-ecs-dev
+  azure:
+    enabled: false
+    accounts: []
+    bakeryDefaults:
+      templateFile: azure-linux.json
+      baseImages: []
+  dcos:
+    enabled: false
+    accounts: []
+    clusters: []
+  dockerRegistry:
+    enabled: true
+    accounts:
+    - name: YOUR-dockerhub
+      requiredGroupMembership: []
+      permissions: {}
+      address: https://index.docker.io
+      email: fake.email@spinnaker.io
+      cacheIntervalSeconds: 30
+      clientTimeoutMillis: 60000
+      cacheThreads: 1
+      paginateSize: 100
+      sortTagsByDate: false
+      trackDigests: false
+      insecureRegistry: false
+      repositories:
+      - library/alpine
+      - library/ubuntu
+      - library/centos
+      - library/nginx
+    primaryAccount: YOUR-dockerhub
+  google:
+    enabled: false
+    accounts:
+    - name: my-gcp-account
+      requiredGroupMembership: []
+      permissions: {}
+      project: my-orbit-project-71824
+      jsonPath: /home/spinnaker/.hal/default/staging/dependencies/1091594107-gcp_my-gcp-account.json
+      alphaListed: false
+      imageProjects: []
+      consul:
+        enabled: false
+        agentEndpoint: localhost
+        agentPort: 0
+        datacenters: []
+    primaryAccount: my-gcp-account
+    bakeryDefaults:
+      templateFile: gce.json
+      baseImages: []
+      zone: us-central1-f
+      network: default
+      useInternalIp: false
+  huaweicloud:
+    enabled: false
+    accounts: []
+    bakeryDefaults:
+      baseImages: []
+  kubernetes:
+    enabled: true
+    accounts:
+    - name: YOUR-default
+      requiredGroupMembership: []
+      permissions: {}
+      dockerRegistries:
+      - accountName: dockerhub
+        namespaces: []
+      providerVersion: V2
+      context: default
+      configureImagePullSecrets: true
+      serviceAccount: true
+      cacheThreads: 1
+      namespaces:
+      - default
+      omitNamespaces: []
+      kinds: []
+      omitKinds: []
+      customResources: []
+      cachingPolicies: []
+      oAuthScopes: []
+      onlySpinnakerManaged: true
+    primaryAccount: YOUR-default
+  tencentcloud:
+    enabled: false
+    accounts: []
+    bakeryDefaults:
+      baseImages: []
+  oracle:
+    enabled: false
+    accounts: []
+    bakeryDefaults:
+      templateFile: oci.json
+      baseImages: []
+  cloudfoundry:
+    enabled: false
+    accounts:
+    - name: pivotal
+      requiredGroupMembership: []
+      permissions: {}
+      password: PASS
+      user: bogus@opsmx.io
+      skipSslValidation: false
+      api: api.run.pivotal.io
+    primaryAccount: pivotal
+  
+  artifacts:
+    bitbucket:
+      enabled: false
+      accounts: []
+    gcs:
+      enabled: false
+      accounts: []
+    oracle:
+      enabled: false
+      accounts: []
+    github:
+      enabled: false
+      accounts:
+      - name: "my-github"
+        username: encrypted:gituser-token:user
+        token: encrypted:gituser-token:token
+    gitlab:
+      enabled: false
+      accounts: []
+    gitrepo:
+      enabled: false
+      accounts: []
+    http:
+      enabled: false
+      accounts: []
+    helm:
+      enabled: false
+      accounts: []
+    s3:
+      enabled: false
+      accounts: []
+    maven:
+      enabled: false
+      accounts: []
+    templates: []
+    serviceLimits:
+      implementationLimits:
+        AmazonElasticLoadBalancing:
+          defaults:
+            rateLimit: 10.0
+  
+#Stuff below is best not changed
+redis:
+  ## Redis endpoint that is used by clouddriver
+  ## Change this to custom URL if installRedis is set to false
+  ## url: redis://{{ .Release.Name }}-redis-master:6379
+  ##
+  url: redis://:password@{{ .Release.Name }}-redis-master
+  port: 6379
+  image:
+    registry: quay.io/opsmxpublic
+    repository: bitnami-redis
+  password: password
+  cluster:
+    enabled: false
+
+  # External Redis option will be enabled if in-cluster redis is disabled
+  external:
+    host: "<EXTERNAL-REDIS-HOST-NAME>"
+    port: 6379
+    # password: ""
+  nodeSelector: {}
+
+  ## Redis config file
+  ## ref: https://redis.io/topics/config
+  ##
+  configmap: |-
+    # Enable AOF https://redis.io/topics/persistence#append-only-file
+    appendonly no
+    # Disable RDB persistence, AOF persistence already enabled.
+    save 60 1000
+

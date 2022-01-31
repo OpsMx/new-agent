@@ -1,0 +1,1 @@
+{{ .Values.agent.agentName }} is successfully installed and configured. Please check the agent status in ISD ui.

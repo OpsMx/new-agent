@@ -1,0 +1,23 @@
+spectator:
+  applicationName: ${spring.application.name}
+  webEndpoint:
+    enabled: true
+
+spinnaker:
+  extensibility:
+    plugins: {}
+    repositories: {}
+    plugins-root-path: /opt/clouddriver/plugins
+    strict-plugin-loading: false
+
+# halconfig
+server:
+  port: ${services.clouddriver.port:7002}
+  address: ${services.clouddriver.host:localhost}
+
+appengine:
+  enabled: false
+  accounts: []
+
+
+{{ toYaml .Values.accountConfig }}

@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    include: git
+  cloud:
+    config:
+      server:
+        git:
+          uri: {{ .Values.clouddriver.dynGit.uri }}
+          username: {{ .Values.clouddriver.dynGit.username }}
+          password: {{ .Values.clouddriver.dynGit.password }}
+          basedir: /tmp/config-repo
+          searchPaths: /
+          defaultLabel: {{ .Values.clouddriver.dynGit.defaultLabel }}
+          refresh-rate: 10
+encrypt:
+  key: Q7udUkHPuA3VnNlOtksSgQ

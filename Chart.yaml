@@ -1,0 +1,13 @@
+apiVersion: v2
+name: agent-install
+description: ISD Agent with auto-agent creation and clouddriver configuration
+
+type: application
+
+version: 3.10.1
+
+appVersion: "3.10.1"
+dependencies:
+  - name: redis
+    version: 10.5.3
+    condition: installRedis

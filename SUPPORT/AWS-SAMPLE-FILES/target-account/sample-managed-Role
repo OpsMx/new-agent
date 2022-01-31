@@ -1,0 +1,30 @@
+Spinnaker authenticates with the primary role and assumes itself for primary role.
+
+This needs two things:
+a) Permissions to DO things
+b) Trust to allow "assume" role from the primary account
+
+==========================================================================
+PERMISSIONS (policy)
+==========================================================================
+See sample-target-policy
+
+
+
+==================================================================
+TRUST RELATIONSHIP: If coming from EKS, trust "role" srini-nonroot-role and
+set up the worker nodes with with role. 
+For non-EKS, trust "user" srini-nonroot instead of the role
+==================================================================
+{
+  "Version": "2008-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::<account1>:role/srini-nonroot"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}

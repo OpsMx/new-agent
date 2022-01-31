@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spin
+    cluster: spin-clouddriver
+  name: spin-clouddriver
+spec:
+  ports:
+  - port: 7002
+    protocol: TCP
+    targetPort: 7002
+  selector:
+    app: spin
+    cluster: spin-clouddriver
+  sessionAffinity: None
+  type: ClusterIP

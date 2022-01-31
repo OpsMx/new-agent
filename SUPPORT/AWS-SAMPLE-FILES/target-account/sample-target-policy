@@ -1,0 +1,151 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:AddRoleToInstanceProfile",
+                "iam:DetachRolePolicy",
+                "iam:DeleteInstanceProfile",
+                "iam:AttachRolePolicy",
+                "iam:CreateInstanceProfile",
+                "iam:DeletePolicy",
+                "iam:CreatePolicy",
+                "iam:ListInstanceProfiles",
+                "iam:CreateServiceLinkedRole",
+                "iam:PassRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::<account2>:role/srini-target-role",
+                "arn:aws:iam::<account2>:role/BaseIAMRole"
+            ],
+            "Effect": "Allow",
+            "Sid": "IAMPermissions"
+        },
+        {
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+            ],
+            "Resource": "*",
+            "Effect": "Allow",
+            "Sid": "KMSPermissions"
+        },
+        {
+            "Action": [
+                "rds:CreateDBSubnetGroup",
+                "rds:ModifyDBParameterGroup",
+                "rds:ModifyDBClusterParameterGroup",
+                "rds:CreateDBParameterGroup",
+                "rds:DeleteDBSubnetGroup",
+                "rds:DeleteDBSecurityGroup",
+                "rds:DeleteDBParameterGroup",
+                "rds:CreateDBClusterParameterGroup",
+                "rds:ModifyDBCluster",
+                "rds:AddTagsToResource",
+                "rds:CreateDBSecurityGroup",
+                "rds:CreateDBCluster",
+                "rds:DeleteDBClusterParameterGroup",
+                "rds:ModifyDBSubnetGroup",
+                "rds:CreateDBInstance"
+            ],
+            "Resource": "*",
+            "Effect": "Allow",
+            "Sid": "RDSPermissions"
+        },
+        {
+            "Action": [
+                "cloudwatch:PutMetricAlarm",
+                "cloudwatch:DeleteAlarms"
+            ],
+            "Resource": "*",
+            "Effect": "Allow",
+            "Sid": "CloudWatchPermissions"
+        },
+        {
+            "Action": [
+                "ec2:*",
+                "elasticloadbalancing:*",
+                "autoscaling:*",
+                "s3:*",
+                "eks:*",
+                "dynamodb:*",
+                "elasticache:*",
+                "ecs:*",
+                "lambda:*",
+                "cloudwatch:*"
+            ],
+            "Resource": "*",
+            "Effect": "Allow",
+            "Sid": "FullPermissions"
+        },
+        {
+            "Action": [
+                "ec2:AcceptVpc*",
+                "ec2:AssociateDhcpOptions",
+                "ec2:AssociateRouteTable",
+                "ec2:AssociateSubnetCidrBlock",
+                "ec2:AssociateVpcCidrBlock",
+                "ec2:AttachClassicLinkVpc",
+                "ec2:AttachInternetGateway",
+                "ec2:AttachNetworkInterface",
+                "ec2:AttachVpnGateway",
+                "ec2:CreateCustomerGateway",
+                "ec2:CreateDefaultSubnet",
+                "ec2:CreateDefaultVpc",
+                "ec2:CreateDhcpOptions",
+                "ec2:CreateEgressOnlyInternetGateway",
+                "ec2:CreateFlowLogs",
+                "ec2:CreateInternetGateway",
+                "ec2:CreateNatGateway",
+                "ec2:CreateNetworkAcl",
+                "ec2:CreateNetworkAclEntry",
+                "ec2:CreateNetworkInterface",
+                "ec2:CreateNetworkInterfacePermission",
+                "ec2:CreateRoute",
+                "ec2:CreateRouteTable",
+                "ec2:CreateSubnet",
+                "ec2:CreateVp*",
+                "ec2:DeleteCustomerGateway",
+                "ec2:DeleteDhcpOptions",
+                "ec2:DeleteEgressOnlyInternetGateway",
+                "ec2:DeleteFlowLogs",
+                "ec2:DeleteInternetGateway",
+                "ec2:DeleteNatGateway",
+                "ec2:DeleteNetwork*",
+                "ec2:DeleteRo*",
+                "ec2:DeleteSubnet",
+                "ec2:DeleteVp*",
+                "ec2:DetachClassicLinkVpc",
+                "ec2:DetachInternetGateway",
+                "ec2:DetachNetworkInterface",
+                "ec2:DetachVpnGateway",
+                "ec2:DisableVgwRoutePropagation",
+                "ec2:DisableVpcClassicLink",
+                "ec2:DisableVpcClassicLinkDnsSupport",
+                "ec2:DisassociateAddress",
+                "ec2:DisassociateRouteTable",
+                "ec2:DisassociateSubnetCidrBlock",
+                "ec2:DisassociateVpcCidrBlock",
+                "ec2:EnableVgwRoutePropagation",
+                "ec2:EnableVpcClassicLink",
+                "ec2:EnableVpcClassicLinkDnsSupport",
+                "ec2:ModifyNetworkInterfaceAttribute",
+                "ec2:ModifySubnetAttribute",
+                "ec2:ModifyVpc*",
+                "ec2:MoveAddressToVpc",
+                "ec2:RejectVpc*",
+                "ec2:ReplaceNetwork*",
+                "ec2:ReplaceRoute",
+                "ec2:ReplaceRouteTableAssociation",
+                "ec2:ResetNetworkInterfaceAttribute",
+                "ec2:RestoreAddressToClassic"
+            ],
+            "Resource": "*",
+            "Effect": "Deny",
+            "Sid": "VPCDenyPermissions"
+        }
+    ]
+}

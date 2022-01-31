@@ -1,0 +1,45 @@
+Permissions for: <account1>:role/srini-nonroot-role
+This file allows the primary account to assume the role it needs to deploy
+<account1>:role/srini-nonroot-role: allow the role to assume role to itself
+<account2>:role/ROL-Spinnaker-Managed-Role: target-account role
+
+USER: user/srini-nonroot. This user, MUST have these permissions as well
+==================================================
+PERMISSIONS (Policies)
+ReadOnlyAccess
+IAMReadOnlyAccess
+and...this policy
+==================================================
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Resource": [
+                "arn:aws:iam::<account1>:role/srini-nonroot-role",    
+                "arn:aws:iam::<account2>:role/ROL-Spinnaker-Managed-Role"
+            ],
+            "Effect": "Allow"
+        }
+    ]
+}
+
+
+==================================================
+TRUST RELATIONSHIPS - Trust the USER "srini-nonroot"
+This is only required if we outside the AWS Eco system
+From EKS, change this to the role to trust
+==================================================
+{
+  "Version": "2008-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::<account1>:user/srini-nonroot"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}

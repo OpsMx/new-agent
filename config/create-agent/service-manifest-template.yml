@@ -1,0 +1,33 @@
+apiVersion: v1
+data:
+  services.yaml: |+
+    outgoingServices:
+      - name: clouddriver-agent
+        type: jenkins
+        enabled: true
+        config:
+          url: http://spin-clouddriver:7002
+          credentials:
+            type: none
+    incomingServices:
+      - name: orca
+        serviceType: jenkins
+        port: 8083
+        useHTTP: true
+        destination: controller
+        destinationService: orca-controller
+      - name: front50
+        serviceType: jenkins
+        port: 8080
+        useHTTP: true
+        destination: controller
+        destinationService: front50-controller
+      - name: fiat
+        serviceType: jenkins
+        port: 7003
+        useHTTP: true
+        destination: controller
+        destinationService: fiat-controller
+kind: ConfigMap
+metadata:
+  name: opsmx-services-{{ .Values.agent.agentName }}

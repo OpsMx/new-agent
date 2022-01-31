@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-agent
+  labels:
+    app: agent-install
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+        - command:
+            - bash
+            - /tmp/initscript/create-agent.sh
+          env:
+            - name: AGENTNAME
+              value: {{ .Values.agent.agentName }}
+            - name: GATEURL
+              value: {{ .Values.agent.gateUrl }}
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+          image: quay.io/opsmxpublic/create-agent:1.0
+          name: create-agent
+          volumeMounts:
+          - mountPath: /tmp/initscript/
+            name: create-agent
+      restartPolicy: Never
+      serviceAccount: create-agent-{{ .Values.agent.agentName }}
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: create-agent
+          name: create-agent

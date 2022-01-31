@@ -1,0 +1,1 @@
+{"agentName": "{{ .Values.agent.agentName }}", "cluster": "{{ .Values.agent.cluster }}","description": "{{ .Values.agent.description }}","spinnaker": "REPLACE"}

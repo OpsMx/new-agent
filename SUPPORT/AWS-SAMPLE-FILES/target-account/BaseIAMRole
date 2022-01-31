@@ -1,0 +1,25 @@
+Primary Account has a "default.iamrole" that it will use if any permissions are not available in the primary role.
+This is required to be created.
+a) No permissions (policies) are required
+b) Trust Relationship need to contain the statement below
+
+
+
+
+
+
+================================================================
+TRUST
+================================================================
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
