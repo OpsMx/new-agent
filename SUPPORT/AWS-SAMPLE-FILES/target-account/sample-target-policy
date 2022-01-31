@@ -17,7 +17,8 @@
             ],
             "Resource": [
                 "arn:aws:iam::<account2>:role/srini-target-role",
-                "arn:aws:iam::<account2>:role/BaseIAMRole"
+                "arn:aws:iam::<account2>:role/BaseIAMRole",
+                "arn:aws:iam::<account2>:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling
             ],
             "Effect": "Allow",
             "Sid": "IAMPermissions"
